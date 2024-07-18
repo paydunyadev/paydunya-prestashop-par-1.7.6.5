@@ -23,12 +23,21 @@
 
 class PaydunyaGetContentController
 {
+    private $module;
+    private $file;
+    private $path;
+    private $context;
+
     public function __construct($module, $file, $path)
     {
         $this->file = $file;
         $this->module = $module;
         $this->context = Context::getContext(); 
-        $this->_path = $path;
+        /*$this->_path = $path;*/
+    }
+    public function getModulePathUri()
+    {
+        return $this->module->getPathUri();
     }
 
     public function processConfiguration()
@@ -51,18 +60,17 @@ class PaydunyaGetContentController
 
     public function renderForm()
     {
-        $html = '<div class="alert alert-info">' . $this->module->l("Vous trouverez vos clés d'API au niveau de votre application PayDunya.") . '<br/>' . $this->module->l("Si vous n'avez pas encore d'application pour ce site Prestashop, créez-en une en vous servant du lien suivant: ") . '<a target="_blank" href="https://paydunya.com/integration-setups/create">https://paydunya.com/integration-setups/create</a></div>';
+        // Translator de module
+        $translator = $this->module->getTranslator();
 
-        $modes = array(
-          array(
-            'id_option' => 'test',
-            'name' => 'Test'
-          ),
-          array(
-            'id_option' => 'live',
-            'name' => 'Live'
-          ),
-        );
+        $html = '<div class="alert alert-info">' . $translator->trans("Vous trouverez vos clés d'API au niveau de votre application PayDunya.", [], 'Modules.Paydunya.admin') . 
+        '<br/>' . $translator->trans("Si vous n'avez pas encore d'application pour ce site Prestashop, créez-en une en vous servant du lien suivant: ", [], 'Modules.Paydunya.admin') . '<a target="_blank" href="https://paydunya.com/integration-setups/create">https://paydunya.com/integration-setups/create</a></div>';
+
+        
+        $modes = [
+            ['id_option' => 'test', 'name' => 'Test'],
+            ['id_option' => 'live', 'name' => 'Live'],
+        ];
 
         $inputs = array(
             array('name' => 'PAYDUNYA_MASTER_KEY', 'label' => $this->module->l('Clé Principale'), 'required' => 'true', 'type' => 'text'),
@@ -84,7 +92,7 @@ class PaydunyaGetContentController
                     'icon' => 'icon-wrench'
                 ),
                 'input' => $inputs,
-                'submit' => array('title' => $this->module->l('Save'))
+                'submit' => array('title' => $this->module->l('Enregistrer'))
             )
         );
 
@@ -118,6 +126,7 @@ class PaydunyaGetContentController
           <h2 class="lead">' . $this->module->l('Information utiles') . '</h2>
           <p>- ' . $this->module->l('Pour les paiements tests, vous devez impérativement fournir votre clé principale, votre clé privée de test et votre token de test.') . '</p>
            <p>- ' . $this->module->l('Pour les paiements en production, vous devez impérativement fournir votre clé principale, votre clé privée de production et votre token de production.') . '</p>
+           <p>- ' . $this->module->l("Le montant minimum de paiement est de 200 FCFA.", [], 'Modules.Paydunya.Admin', $this->context->language->locale) . '<br/>' . $this->module->l("Nous vous recommandons donc d'utiliser le système de devise de Prestashop.", [], 'Modules.Paydunya.Admin', $this->context->language->locale) . '<p>
           <p>- ' . $this->module->l("Le montant de toute requête de paiement envoyée à PayDunya devra au préalable être converti en XOF(CFA).") . '<br/>' . $this->module->l("Nous vous recommandons donc d'utiliser le système de devise de Prestashop.") . '<p>
           <p>- ' . $this->module->l('Avec Prestashop, il est possible de définir une mise à jour automatique des taux de change.') . '<br/>' . $this->module->l('Pour ce faire, rendez-vous au niveau de "International -> Localisation -> Devises" en vous servant du menu principal.') . '<p>
         </div>';
