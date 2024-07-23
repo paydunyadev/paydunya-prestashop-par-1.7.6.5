@@ -63,8 +63,8 @@ class PaydunyaGetContentController
         // Translator de module
         $translator = $this->module->getTranslator();
 
-        $html = '<div class="alert alert-info">' . $translator->trans("Vous trouverez vos clés d'API au niveau de votre application PayDunya.", [], 'Modules.Paydunya.admin') . 
-        '<br/>' . $translator->trans("Si vous n'avez pas encore d'application pour ce site Prestashop, créez-en une en vous servant du lien suivant: ", [], 'Modules.Paydunya.admin') . '<a target="_blank" href="https://paydunya.com/integration-setups/create">https://paydunya.com/integration-setups/create</a></div>';
+        $html = '<div class="alert alert-info">' . $translator->trans("Vous trouverez vos clés d'API au niveau de votre application PayDunya.", []) . 
+        '<br/>' . $translator->trans("Si vous n'avez pas encore d'application pour ce site Prestashop, créez-en une en vous servant du lien suivant: ", []) . '<a target="_blank" href="https://paydunya.com/integration-setups/create">https://paydunya.com/integration-setups/create</a></div>';
 
         
         $modes = [
@@ -126,7 +126,7 @@ class PaydunyaGetContentController
           <h2 class="lead">' . $this->module->l('Information utiles') . '</h2>
           <p>- ' . $this->module->l('Pour les paiements tests, vous devez impérativement fournir votre clé principale, votre clé privée de test et votre token de test.') . '</p>
            <p>- ' . $this->module->l('Pour les paiements en production, vous devez impérativement fournir votre clé principale, votre clé privée de production et votre token de production.') . '</p>
-           <p>- ' . $this->module->l("Le montant minimum de paiement est de 200 FCFA.", [], 'Modules.Paydunya.Admin', $this->context->language->locale) . '<br/>' . $this->module->l("Nous vous recommandons donc d'utiliser le système de devise de Prestashop.", [], 'Modules.Paydunya.Admin', $this->context->language->locale) . '<p>
+           <p>- ' . $this->module->l("Le montant minimum de paiement est de 200 FCFA.", [], $this->context->language->locale) . '<br/>' . $this->module->l("Nous vous recommandons donc d'utiliser le système de devise de Prestashop.", [], $this->context->language->locale) . '<p>
           <p>- ' . $this->module->l("Le montant de toute requête de paiement envoyée à PayDunya devra au préalable être converti en XOF(CFA).") . '<br/>' . $this->module->l("Nous vous recommandons donc d'utiliser le système de devise de Prestashop.") . '<p>
           <p>- ' . $this->module->l('Avec Prestashop, il est possible de définir une mise à jour automatique des taux de change.') . '<br/>' . $this->module->l('Pour ce faire, rendez-vous au niveau de "International -> Localisation -> Devises" en vous servant du menu principal.') . '<p>
         </div>';
