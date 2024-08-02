@@ -41,30 +41,6 @@ class Paydunya extends PaymentModule
     public $address;
     public $extra_mail_vars;
 
-    /*public function __construct()
-    {
-        $this->name = 'paydunya';
-        $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
-        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
-        $this->author = 'PayDunya';
-        $this->controllers = array('validation');
-        $this->is_eu_compatible = 1;
-
-        $this->currencies = true;
-        $this->currencies_mode = 'checkbox';
-
-        $this->bootstrap = true;
-        parent::__construct();
-
-        $this->displayName = $this->l('PayDunya');
-        $this->description = $this->l('Acceptez des paiements via Orange Money/Joni Joni/Carte Bancaire de manière simple, rapide et sécurisée.');
-
-        if (!count(Currency::checkPaymentCurrencies($this->id))) {
-            $this->warning = $this->l('No currency has been set for this module.');
-        }
-    }*/
-
     public function __construct()
     {
         $this->name = 'paydunya';
@@ -86,7 +62,7 @@ class Paydunya extends PaymentModule
         if (!parent::install() 
             or !$this->registerHook('paymentOptions') 
             or !$this->registerHook('paymentReturn') 
-            or !Configuration::updateValue('PAYDUNYA_PAYNOW_TEXT', "Payer avec Orange Money/Joni Joni/Carte Bancaire via PayDunya")
+            or !Configuration::updateValue('PAYDUNYA_PAYNOW_TEXT', "Payer avec Mobile Money/Carte Bancaire via PayDunya")
             or !Configuration::updateValue('PAYDUNYA_PAYNOW_DESCRIPTION', 'PayDunya est la passerelle de paiement la plus populaire pour les achats en ligne.')
             or !Configuration::updateValue('PAYDUNYA_MASTER_KEY', '')
             or !Configuration::updateValue('PAYDUNYA_TEST_PRIVATE_KEY', '')

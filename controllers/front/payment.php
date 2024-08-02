@@ -52,7 +52,22 @@ class PaydunyaPaymentModuleFrontController extends ModuleFrontController
         // Check if customer exists
         $customer = new Customer($cart->id_customer);
         if (!Validate::isLoadedObject($customer))
-            Tools::redirect('index.php?controller=order&step=1');
+        // $currency = $this->context->currency->iso_code; // Use iso_code instead of name
+        // if ($currency !== 'XOF') { // Check for CFA using ISO code
+        //     // Output a message on the page without redirecting
+        //     $this->context->smarty->assign('return_message', Configuration::get('PAYDUNYA_SUCCESS_MESSAGE'));
+        //     Tools::redirect('index.php?controller=order&step=1');
+        //     return;
+        // }
+        $currency = $this->context->currency->iso_code; // Use iso_code instead of name
+        if ($currency !== 'XOF') { // Check for CFA using ISO code
+            // Output a message on the page without redirecting
+            echo '<div style="color: red; font-weight: bold; margin: 20px 0;">
+                    Cette methode de paiement n\'accepte que les paiements en devise XOF.
+                  </div>';
+            return;
+        }
+        Tools::redirect('index.php?controller=order&step=1');
 
         $this->process_payment($customer);
     }
@@ -74,6 +89,8 @@ class PaydunyaPaymentModuleFrontController extends ModuleFrontController
     }
 
     private function process_payment($customer) {
+       
+       
         $json = json_encode($this->get_paydunya_args($customer));
         $ch = curl_init();
         $master_key = Configuration::get('PAYDUNYA_MASTER_KEY');
@@ -148,7 +165,7 @@ class PaydunyaPaymentModuleFrontController extends ModuleFrontController
             );
         }
 
-        $isOrderX = Db::getInstance()->getRow(' SELECT * FROM '._DB_PREFIX_.'orders WHERE id_customer = '.$cart->id_customer.' ORDER BY id_order DESC ');
+        $isOrderX = Db::getInstance()->getRow(' SELECT * FROM '.DB_PREFIX.'orders WHERE id_customer = '.$cart->id_customer.' ORDER BY id_order DESC ');
 
         $paydunya_args = array(
             "invoice" => array(
@@ -167,9 +184,9 @@ class PaydunyaPaymentModuleFrontController extends ModuleFrontController
                 "description" => "Paiement de " . $order_total_amount . " FCFA pour article(s) achetés sur " . Configuration::get('PS_SHOP_NAME')
             ), "store" => array(
                 "name" => Configuration::get('PS_SHOP_NAME'),
-                "website_url" => Tools::getHttpHost( true ).__PS_BASE_URI__
+                "website_url" => Tools::getHttpHost( true )._PS_BASE_URI_
             ), "actions" => array(
-                "cancel_url" => Tools::getHttpHost( true ).__PS_BASE_URI__,
+                "cancel_url" => Tools::getHttpHost( true )._PS_BASE_URI_,
                 "callback_url" => $this->context->link->getModuleLink('paydunya', 'validationipn'),
                 "return_url" => $order_return_url
             ), "custom_data" => array(

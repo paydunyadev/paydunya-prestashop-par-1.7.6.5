@@ -231,22 +231,40 @@ class PaydunyaPaymentReturnController
                         // Redirect to order confirmation page
                         $this->context->smarty->assign('return_message', Configuration::get('PAYDUNYA_SUCCESS_MESSAGE'));
                         Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int) $cart_id . '&id_module=' . (int) $this->module->id . '&id_order=' . (int) $objOrder->id . '&key=' . $customer->secure_key);
+                        
+                    } else if ($status == "failed") {
+                        PrestaShopLogger::addLog('Payment failed for cart ID: ' . $cart_id, 3);
+                    
+                        $order_id = Order::getOrderByCartId($cart_id);
+                        if (!$order_id) {
+                            PrestaShopLogger::addLog('Order not found for cart ID: ' . $cart_id, 3);
+                            die('Order not found');
+                        }
+                    
+                        $objOrder = new Order($order_id);
+                        if (!Validate::isLoadedObject($objOrder)) {
+                            PrestaShopLogger::addLog('Invalid order ID: ' . $order_id, 3);
+                            die('Invalid order');
+                        }
+                    
+                        // Update the order status to Payment Error
+                        $objOrder->setCurrentState(Configuration::get('PS_OS_ERROR'));
+                        PrestaShopLogger::addLog('Order status updated to Payment Error for order ID: ' . $objOrder->id, 3);
+                    
+                        // Redirect to a custom error page or retry page
+                        $this->context->smarty->assign('return_message', 'Paiement échoué. Veuillez réessayer.');
+                        Tools::redirect('index.php?controller=order&step=3');
                     } else {
-                        PrestaShopLogger::addLog('Payment not completed. Status: ' . $status, 3);
-                        $this->context->smarty->assign('return_message', 'Vous recevrez votre facture électronique par mail une fois le paiement effectué.');
+                        $custom_data = $response_decoded->custom_data;
+        
+                        // Check if cart is valid
+                        $cart_id = $custom_data->cart_id;
+                        $order_id = (int) Order::getOrderByCartId($cart_id);
+                        $objOrder = new Order($order_id);
+                        $objOrder->setCurrentState(Configuration::get('PS_OS_ERROR'));
+                        $this->context->smarty->assign('return_message', Configuration::get('PAYDUNYA_ERROR_MESSAGE'));
                         return $this->module->display($this->file, 'payment_return.tpl');
                     }
-                } else {
-                    $custom_data = $response_decoded->custom_data;
-    
-                    // Check if cart is valid
-                    $cart_id = $custom_data->cart_id;
-                    $order_id = (int) Order::getOrderByCartId($cart_id);
-                    $objOrder = new Order($order_id);
-                    $objOrder->setCurrentState(Configuration::get('PS_OS_ERROR'));
-                    $this->context->smarty->assign('return_message', Configuration::get('PAYDUNYA_ERROR_MESSAGE'));
-                    return $this->module->display($this->file, 'payment_return.tpl');
-                }
             } catch (Exception $e) {
                 PrestaShopLogger::addLog('Exception: ' . $e->getMessage(), 3);
     
