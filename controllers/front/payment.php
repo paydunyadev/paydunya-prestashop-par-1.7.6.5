@@ -65,7 +65,7 @@ class PaydunyaPaymentModuleFrontController extends ModuleFrontController
             echo '<div style="color: red; font-weight: bold; margin: 20px 0;">
                     Cette methode de paiement n\'accepte que les paiements en devise XOF.
                   </div>';
-            return;
+            return; 
         }
         Tools::redirect('index.php?controller=order&step=1');
 
