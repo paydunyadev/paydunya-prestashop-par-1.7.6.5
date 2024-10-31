@@ -1,0 +1,1 @@
+Au téléchargement, rénommer le fichier zip en "paydunya" avant de le chrager au niveau de prestashop
