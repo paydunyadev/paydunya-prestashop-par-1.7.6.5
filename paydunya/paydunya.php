@@ -24,6 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 if (!defined('_PS_VERSION_')) {
@@ -44,24 +45,16 @@ class Paydunya extends PaymentModule
     {
         $this->name = 'paydunya';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
-        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
+        $this->version = '1.1.0';
+        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
         $this->author = 'PayDunya';
-        $this->controllers = array('validation');
-        $this->is_eu_compatible = 1;
-
-        $this->currencies = true;
-        $this->currencies_mode = 'checkbox';
-
+        $this->controllers = ['validation'];
         $this->bootstrap = true;
+
         parent::__construct();
 
-        $this->displayName = $this->l('PayDunya');
-        $this->description = $this->l('Acceptez des paiements via Orange Money/Joni Joni/Carte Bancaire de manière simple, rapide et sécurisée.');
-
-        if (!count(Currency::checkPaymentCurrencies($this->id))) {
-            $this->warning = $this->l('No currency has been set for this module.');
-        }
+        $this->displayName = $this->trans('PayDunya',[],'Modules.Paydunya.admin');
+        $this->description = $this->trans('PayDunya est la plateforme sécurisée qui facilite le paiement des entreprises pour l\'achat de biens et services via mobile money et cartes bancaires.',[],'Modules.Paydunya.admin');
     }
 
     public function install()
@@ -69,8 +62,8 @@ class Paydunya extends PaymentModule
         if (!parent::install() 
             or !$this->registerHook('paymentOptions') 
             or !$this->registerHook('paymentReturn') 
-            or !Configuration::updateValue('PAYDUNYA_PAYNOW_TEXT', 'Payer avec Orange Money/Joni Joni/Carte Bancaire via PayDunya')
-            or !Configuration::updateValue('PAYDUNYA_PAYNOW_DESCRIPTION', 'PayDunya est la passerelle de paiement la plus populaire pour les achats en ligne au Sénégal.')
+            or !Configuration::updateValue('PAYDUNYA_PAYNOW_TEXT', "Payer avec Mobile Money/Carte Bancaire via PayDunya")
+            or !Configuration::updateValue('PAYDUNYA_PAYNOW_DESCRIPTION', 'PayDunya est la passerelle de paiement la plus populaire pour les achats en ligne.')
             or !Configuration::updateValue('PAYDUNYA_MASTER_KEY', '')
             or !Configuration::updateValue('PAYDUNYA_TEST_PRIVATE_KEY', '')
             or !Configuration::updateValue('PAYDUNYA_TEST_TOKEN', '')
@@ -104,7 +97,7 @@ class Paydunya extends PaymentModule
             $order_state->hidden = false;
             $order_state->paid = false;
             $order_state->deleted = false;
-            $order_state->name = array((int)Configuration::get('PS_LANG_DEFAULT') => pSQL($this->l('PayDunya - En attente de paiement')));
+            $order_state->name = array((int)Configuration::get('PS_LANG_DEFAULT') => pSQL($this->trans('PayDunya - En attente de paiement',[],'Modules.Paydunya.admin')));
            
             if ($order_state->add()) {
                 // We save the order State ID in Configuration database
