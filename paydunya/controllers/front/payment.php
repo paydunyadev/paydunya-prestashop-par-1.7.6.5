@@ -130,6 +130,11 @@ class PaydunyaPaymentModuleFrontController extends ModuleFrontController
             );
         }
         $isOrderX = Db::getInstance()->getRow(' SELECT * FROM '._DB_PREFIX_.'orders WHERE id_customer = '.$cart->id_customer.' ORDER BY id_order DESC ');
+        $id_address = $cart->id_address_delivery;
+        $address = new Address($id_address);
+
+        // Prioriser le numéro de téléphone mobile s'il existe
+        $customer_phone = !empty($address->phone_mobile) ? $address->phone_mobile : $address->phone;
         $paydunya_args = array(
             "invoice" => array(
                 "items" => $paydunya_items,
@@ -143,6 +148,11 @@ class PaydunyaPaymentModuleFrontController extends ModuleFrontController
                     "amount" => $order_total_tax_amount
                   ]
                 ],
+                "customer" => array(
+                "name" => $customer->firstname . ' ' . $customer->lastname,
+                "email" => $customer->email,
+                "phone" => $customer_phone
+                ),
                 "total_amount" => $order_total_amount,
                 "description" => "Paiement de " . $order_total_amount . " FCFA pour article(s) achetés sur " . Configuration::get('PS_SHOP_NAME')
             ), "store" => array(
